@@ -10,7 +10,7 @@ The method shown in this repository can be used for improving load forecasting p
 ## Introduction
 The COVID-19 pandemic has brought major disruptions to the energy systems' operations. To keep the lights on during the difficult times, power system engineers rely on accurate load forecasts to schedule electricity generations. However, the change of mobility patterns, the implementations of stay-at-home orders have greatly reshaped the electricity consumption, and made an accurate forecast of future loads challenging.
 
-<img src="./images/forecast_error_2.png" width="250">
+<img src="./images/forecast_error_2.png" width="500">
 
 
 ## Data
@@ -27,7 +27,8 @@ python scripts/transfer_main.py
 
 Compare and plot the results of different algorithms
 
-![forecast_result](https://github.com/chennnnnyize/Load-Forecasting-During-COVID-19/blob/master/images/Forecast_result.png)
+<img src="./images/Forecast_result.png" width="500">
+
 
 ## Questions?
 
