@@ -262,7 +262,6 @@ training_MAPE=calculate_MAPE(Ground_truth=data_to_compare[-24*num_of_days:-24*14
 print("Training MAPE Mobility", training_MAPE)
 testing_MAPE=calculate_MAPE(Ground_truth=data_to_compare[-24*14:, 0], pred=pred_data_mobi_sole[-24*14:, 0])
 print("Testing MAPE Mobility", testing_MAPE)
-pred_data_mobi_mtl=(pred_data_mobi_mtl[-24*num_of_days:, 0]).reshape(-1, 1)
 training_MAPE=calculate_MAPE(Ground_truth=data_to_compare[-24*num_of_days:-24*14, 0], pred=pred_data_mobi_mtl[-24*num_of_days:-24*14, 0])
 print("Training MAPE MTL", training_MAPE)
 testing_MAPE=calculate_MAPE(Ground_truth=data_to_compare[-24*14:, 0], pred=pred_data_mobi_mtl[-24*14:, 0])
