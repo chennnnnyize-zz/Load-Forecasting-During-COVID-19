@@ -3,6 +3,8 @@ This is the code repo for [Using Mobility for Electrical Load Forecasting During
 
 By Yize Chen, Weiwei Yang and Baosen Zhang, 
 
+University of Washington and Microsoft Research
+
 The method shown in this repository can be used for improving load forecasting performance during the uncertain times due to COVID-19 pandemic.
 
 
