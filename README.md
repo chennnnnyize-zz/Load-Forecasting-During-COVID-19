@@ -16,12 +16,14 @@ We propose a novel load forecasting model by integrating the mobility features t
 
 
 ## Data
-There are several data sources listed in 'Data' folder. Dure to the space of uploaded files, we only included the entire training data for Seattle, and the small training data (shortly before COVID-10) including mobility for all test cases in the manuscript. 
+There are several data sources listed in 'Data' folder. We included 12 regions of different size and load patterns for evaluation. The load data is coming from utilities and ISOs, while the weather forecast data is coming from WorldWeatherOnline historical weather data API.
 
 
 ## Run Experiments with Pre-Processed Datasets
 Construct the dataset using features from mobility
-
+```
+python scripts/Construct_dataset.py
+```
 
 Train the multi-task learning model based on mobility data
 ```
@@ -29,6 +31,9 @@ python scripts/transfer_main.py
 ```
 
 Compare and plot the results of different algorithms
+```
+python scripts/plot_forecast.py
+```
 
 <img src="./images/Forecast_result.png" width="500">
 
