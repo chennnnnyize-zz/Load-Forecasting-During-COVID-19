@@ -2,12 +2,13 @@ import numpy as np
 import csv
 import matplotlib.pyplot as plt
 
+#Change the folder of storing results
 with open('../Results/Seattle_Test_Results.csv', 'r') as csvfile:
     reader = csv.reader(csvfile)
     data_all3 = [row for row in reader]
 data_all3=np.array(data_all3, dtype=float)
 
-with open('../Data_Processed_New/Seattle_data_all.csv', 'r') as csvfile:
+with open('../Data/Training/Seattle_data_all.csv', 'r') as csvfile:
     reader = csv.reader(csvfile)
     data_all_sea = [row for row in reader]
 data_all_sea = np.array(data_all_sea, dtype=float)
