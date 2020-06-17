@@ -31,7 +31,7 @@ num_of_days=91
 
 
 
-with open('Data_Processed_New/UK_data_all.csv', 'r') as csvfile:
+with open('Data_Processed_New/Chi_data_all.csv', 'r') as csvfile:
     reader = csv.reader(csvfile)
     data_all = [row for row in reader]
 
@@ -46,7 +46,7 @@ Y_data_chi=data_all_wo_mobi_chi[:, 0]
 training_X_chi=np.copy(X_data_chi[:24*730])
 training_Y_chi=np.copy(Y_data_chi[:24*730])
 
-with open('Data_Processed_New/France_data_all.csv', 'r') as csvfile:
+with open('Data_Processed_New/phil_data_all.csv', 'r') as csvfile:
     reader = csv.reader(csvfile)
     data_all_phil = [row for row in reader]
 
@@ -61,7 +61,7 @@ Y_data_phil = data_all_wo_mobi_phil[:, 0]
 training_X_phil = np.copy(X_data_phil[:24*730])
 training_Y_phil = np.copy(Y_data_phil[:24*730])
 
-with open('Data_Processed_New/Germany_data_all.csv', 'r') as csvfile:
+with open('Data_Processed_New/Bos_data_all.csv', 'r') as csvfile:
     reader = csv.reader(csvfile)
     data_all_bos = [row for row in reader]
 
@@ -82,7 +82,7 @@ training_Y_bos=np.copy(Y_data_bos[:24*730])
 
 
 
-with open('Data_Processed_New/UK_mobility_all.csv', 'r') as csvfile:
+with open('Data_Processed_New/Chi_mobility_all.csv', 'r') as csvfile:
     reader = csv.reader(csvfile)
     data_all2 = [row for row in reader]
 
@@ -97,7 +97,7 @@ Y_data_mobi_chi=data_all_mobi[:, 0]
 training_X_mobi_chi=np.copy(X_data_mobi_chi)
 training_Y_mobi_chi=np.copy(Y_data_mobi_chi)
 
-with open('Data_Processed_New/Germany_mobility_all.csv', 'r') as csvfile:
+with open('Data_Processed_New/Bos_mobility_all.csv', 'r') as csvfile:
     reader = csv.reader(csvfile)
     data_all3 = [row for row in reader]
 
@@ -114,7 +114,7 @@ training_Y_mobi_bos=np.copy(Y_data_mobi_bos[:24*60])
 
 
 
-with open('Data_Processed_New/France_mobility_all.csv', 'r') as csvfile:
+with open('Data_Processed_New/phil_mobility_all.csv', 'r') as csvfile:
     reader = csv.reader(csvfile)
     data_all5 = [row for row in reader]
 
@@ -161,10 +161,9 @@ for epoch_num in range(50):
     model1.fit(x=training_X_mobi_chi, y=training_Y_mobi_chi, batch_size=batch_size, epochs=1, shuffle=True)
     model2.fit(x=training_X_mobi_bos, y=training_Y_mobi_bos, batch_size=batch_size, epochs=1, shuffle=True)
     model3.fit(x=training_X_mobi_phil, y=training_Y_mobi_phil, batch_size=batch_size, epochs=1, shuffle=True)
-print("Multi-task training completed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-#model4.load_weights('model/Bos_w_Mobi_Mtl.h5')
-model2.fit(x=training_X_mobi_bos, y=training_Y_mobi_bos, batch_size=batch_size, epochs=2, shuffle=True)
-model2.save_weights('model/France_w_Mobi_Mtl.h5')
+print("############################Multi-task training completed###############################")
+model2.fit(x=training_X_mobi_bos, y=training_Y_mobi_bos, batch_size=batch_size, epochs=10, shuffle=True)
+model2.save_weights('Bos_w_Mobi_Mtl.h5')
 #The prediction results for multi-task learning
 y_pred_mobi_mtl= model3.predict(data_to_predict)
 
@@ -175,9 +174,8 @@ y_pred_mobi_mtl= model3.predict(data_to_predict)
 model=nn_model(input_dim=feature_dim, output_dim=forecast_horizon)
 sgd = SGD(lr=0.0001, decay=1e-6, momentum=0.9, nesterov=True)
 model.compile(loss='mean_absolute_error', optimizer='adam')
-#odel.load_weights('model/Boston_wo_Mobi.h5')
 model.fit(x=training_X_bos, y=training_Y_bos, batch_size=batch_size, epochs=epochs, shuffle=True)
-model.save_weights('model/SA_wo_Mobi.h5')
+model.save_weights('Bos_wo_Mobi.h5')
 y_pred_large=model.predict(X_data_chi)
 
 
@@ -187,37 +185,22 @@ model_small=nn_model(input_dim=feature_dim, output_dim=forecast_horizon)
 #predictions = model(x)  #Works for nn and rnn model
 sgd = SGD(lr=0.0001, decay=1e-6, momentum=0.9, nesterov=True)
 model_small.compile(loss='mean_absolute_error', optimizer='adam')
-#model.load_weights('model/Phil_wo_Mobi.h5')
 model_small.fit(x=training_X_mobi_bos[:, :feature_dim], y=training_Y_mobi_bos, batch_size=batch_size, epochs=epochs, shuffle=True)
-#model.save_weights('model/Phil_wo_Mobi.h5')
+model.save_weights('Bos_wo_Mobi.h5')
 y_pred_small=model.predict(data_to_predict[:,:feature_dim])
 
 
 
 
 
-'''plt.grid()
+plt.grid()
 plt.plot(pred_data[:24*14,0],'b',label='w/o Mobility')
 plt.plot(data_all[:24*14:, 0],'r',label='Ground Truth')
 plt.xlim([0, 24*14])
 plt.xlabel('Hours')
 plt.ylabel('Load (MW)')
 plt.legend()
-plt.show()'''
-
-
-
-'''zx = predictions(shared(Dense(512, activation='relu', name='x_limb')(x)))
-zy = predictions(shared(Dense(512, activation='relu', name='y_limb')(y)))
-
-model_x = Model(inputs=[x], outputs=[zx])
-model_y = Model(inputs=[y], outputs=[zy])
-sgd = SGD(lr=0.0001, decay=1e-6, momentum=0.9, nesterov=True)
-model_x.compile(loss='mean_squared_error', optimizer='adam')
-print("Training begins")
-model_x.fit(x=training_X_mobi, y=training_Y_mobi, batch_size=batch_size, epochs=epochs, shuffle=True)'''
-
-
+plt.show()
 
 
 
@@ -227,12 +210,10 @@ sgd = SGD(lr=0.0001, decay=1e-6, momentum=0.9, nesterov=True)
 model_sole.compile(loss='mean_absolute_error', optimizer='adam')
 
 
-#model3.load_weights('model/Chicago_w_Mobi.h5')
+
 model_sole.fit(x=training_X_mobi_bos, y=training_Y_mobi_bos, batch_size=batch_size, epochs=epochs, shuffle=True)
 model_sole.save_weights('model/SA_w_Mobi.h5')
 y_pred_mobi_sole_model = model_sole.predict(data_to_predict)
-
-
 
 
 
@@ -249,7 +230,7 @@ pred_data_small = scaler_Bos_mob.inverse_transform(df_small)
 
 
 
-print("Results for Chicago")
+print("Results for Boston")
 training_MAPE=calculate_MAPE(Ground_truth=data_to_compare[:24*14,0], pred=pred_data[:24*14,0])
 print("Training MAPE NN_Orig", training_MAPE)
 testing_MAPE=calculate_MAPE(Ground_truth=data_to_compare[-24*14:,0], pred=pred_data[-24*14:,0])
