@@ -1,5 +1,5 @@
-# Load-Forecasting-During-COVID-19
-This is the code repo for [Using Mobility for Electrical Load Forecasting During the COVID-19 Pandemic](https://arxiv.org/abs/1707.09676)
+# Load Forecasting During COVID-19
+This is the code repo for [Using Mobility for Electrical Load Forecasting During the COVID-19 Pandemic](https://arxiv.org/abs/2006.08826)
 
 By Yize Chen, Weiwei Yang and Baosen Zhang, 
 
