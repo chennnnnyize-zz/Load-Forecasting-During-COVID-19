@@ -174,16 +174,16 @@ X_data_mobi_sea=data_all_mobi_sea[:, 1:]
 Y_data_mobi_sea=data_all_mobi_sea[:, 0]
 training_X_mobi_sea=np.copy(X_data_mobi_sea)
 training_Y_mobi_sea=np.copy(Y_data_mobi_sea)
-print("Training data SIZEEEEEEE", np.shape(training_X_mobi_sea))
-mobillity_mean=np.mean(X_data_mobi_sea[24*70:, -9:], axis=0)
+print("Training data SIZE", np.shape(training_X_mobi_sea))
+mobillity_mean=np.mean(X_data_mobi_sea[24*80:, -9:], axis=0)
 mobillity_var=np.std(X_data_mobi_sea[24*70:, -9:], axis=0)
-mobillity_max=np.std(X_data_mobi_sea[24*70:, -9:], axis=0)
+mobillity_max=np.mean(X_data_mobi_sea[:24*7, -9:], axis=0)
 print("mobility mean", mobillity_mean)
 print("mobility var", mobillity_var)
 print("mobility max", np.max(X_data_mobi_sea[24*70:, -9:], axis=0))
 
 
-#RRRRRRRRRRRRRRRRRRRR
+#######################################The code for plots#################################################
 forecast1_upper=np.concatenate((data_all_seasea[:, 1:38], np.tile(mobillity_mean+1.96*mobillity_var, data_all_seasea.shape[0]).reshape(-1, 9)), axis=1)
 forecast1_lower=np.concatenate((data_all_seasea[:, 1:38], np.tile(mobillity_mean-1.96*mobillity_var, data_all_seasea.shape[0]).reshape(-1, 9)), axis=1)
 forecast2_upper=np.concatenate((data_all_seasea[:, 1:38], np.tile(mobillity_max+1.96*mobillity_var, data_all_seasea.shape[0]).reshape(-1, 9)), axis=1)
@@ -217,7 +217,7 @@ data_to_predict=np.copy(X_data_mobi_sea)
 
 x = Input(shape=(feature_dim2,))
 
-'''shared = Dense(128, activation='relu', name='shared')
+shared = Dense(128, activation='relu', name='shared')
 predictions = Dense(forecast_horizon, activation='softmax', name='predictions')
 layer1 = Dense(512, activation='relu')(x)
 layer2 = Dense(128, activation='relu')(layer1)
@@ -238,49 +238,41 @@ model3 = Model(input=x, output=output3)
 model3.compile(loss='mean_absolute_error', optimizer='adam')
 model4 = Model(input=x, output=output4)
 model4.compile(loss='mean_absolute_error', optimizer='adam')
+
 for epoch_num in range(50):
     model1.fit(x=training_X_mobi_chi, y=training_Y_mobi_chi, batch_size=batch_size, epochs=1, shuffle=True)
     model2.fit(x=training_X_mobi_bos, y=training_Y_mobi_bos, batch_size=batch_size, epochs=1, shuffle=True)
     model3.fit(x=training_X_mobi_sea, y=training_Y_mobi_sea, batch_size=batch_size, epochs=1, shuffle=True)
     model4.fit(x=training_X_mobi_phil, y=training_Y_mobi_phil, batch_size=batch_size, epochs=1, shuffle=True)
 print("Multi-task training completed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-#model4.load_weights('model/Bos_w_Mobi_Mtl.h5')
-model3.fit(x=training_X_mobi_sea, y=training_Y_mobi_sea, batch_size=batch_size, epochs=2, shuffle=True)
+model3.fit(x=training_X_mobi_sea, y=training_Y_mobi_sea, batch_size=batch_size, epochs=20, shuffle=True)
 model3.save_weights('model/Seattle_w_Mobi_Mtl.h5')
 #The prediction results for multi-task learning
-y_pred_mobi_mtl= model3.predict(data_to_predict)'''
+y_pred_mobi_mtl= model3.predict(data_to_predict)
 
 
-model_sole=nn_model(input_dim=feature_dim2, output_dim=forecast_horizon)
-#predictions = model(x)  #Works for nn and rnn model
-sgd = SGD(lr=0.0001, decay=1e-6, momentum=0.9, nesterov=True)
-model_sole.compile(loss='mean_squared_error', optimizer='adam')
 
-
-#model3.load_weights('model/Chicago_w_Mobi.h5')
-model_sole.fit(x=training_X_mobi_sea, y=training_Y_mobi_sea, batch_size=batch_size, epochs=epochs, shuffle=True)
-model_sole.save_weights('model/Seattle_w_Mobi.h5')
-y_pred_mobi_sole_model = model_sole.predict(data_to_predict)
+y_pred_mobi_sole_model = model3.predict(data_to_predict)
 df_single_mob = pd.DataFrame(np.concatenate((y_pred_mobi_sole_model, data_to_predict), axis=1))
 pred_data_mobi_sole = scaler_Sea_mob.inverse_transform(df_single_mob)
 
-y_pred_sea_2020_high = model_sole.predict(forecast1_upper)
+y_pred_sea_2020_high = model3.predict(forecast1_upper)
 df_1 = pd.DataFrame(np.concatenate((y_pred_sea_2020_high, forecast1_lower), axis=1))
 pred_data = scaler_Sea_mob.inverse_transform(df_1)
-y_pred_sea_2020_low=model_sole.predict(forecast1_lower)
+y_pred_sea_2020_low=model3.predict(forecast1_lower)
 df_2 = pd.DataFrame(np.concatenate((y_pred_sea_2020_low, forecast1_lower), axis=1))
 pred_data2 = scaler_Sea_mob.inverse_transform(df_2)
-y_pred_sea_2020_high2=model_sole.predict(forecast2_upper)
+y_pred_sea_2020_high2=model3.predict(forecast2_upper)
 df_3 = pd.DataFrame(np.concatenate((y_pred_sea_2020_high2, forecast1_lower), axis=1))
 pred_data3 = scaler_Sea_mob.inverse_transform(df_3)
-y_pred_sea_2020_low2=model_sole.predict(forecast2_lower)
+y_pred_sea_2020_low2=model3.predict(forecast2_lower)
 df_4 = pd.DataFrame(np.concatenate((y_pred_sea_2020_low2, forecast1_lower), axis=1))
 pred_data4 = scaler_Sea_mob.inverse_transform(df_4)
 
-y_pred_sea_2020 = model_sole.predict(forecast1)
+y_pred_sea_2020 = model3.predict(forecast1)
 df_11 = pd.DataFrame(np.concatenate((y_pred_sea_2020, forecast1_lower), axis=1))
 pred_data11 = scaler_Sea_mob.inverse_transform(df_11)
-y_pred_sea_20202 = model_sole.predict(forecast2)
+y_pred_sea_20202 = model3.predict(forecast2)
 df_22 = pd.DataFrame(np.concatenate((y_pred_sea_20202, forecast1_lower), axis=1))
 pred_data22 = scaler_Sea_mob.inverse_transform(df_22)
 
@@ -290,9 +282,7 @@ pred_data22 = scaler_Sea_mob.inverse_transform(df_22)
 
 pred_ALL=np.concatenate((pred_data[:,0].reshape(-1, 1), pred_data2[:,0].reshape(-1, 1),pred_data11[:,0].reshape(-1, 1),
                          pred_data3[:,0].reshape(-1, 1), pred_data4[:,0].reshape(-1, 1), pred_data22[:,0].reshape(-1, 1),), axis=1)
-with open('Results/Seattle_Projection1.csv', 'wb') as f:
-    writer = csv.writer(f)
-    writer.writerows(pred_ALL)
+
 
 
 
