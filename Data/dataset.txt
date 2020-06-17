@@ -1,3 +1,6 @@
 The mobility data includes both mobility data from Google COVID-19 mobility report and Apple mobility report.
 
 In the training folder, for each csv file, we include the first row as actual load, followed by weather data, timing and other class variables, and mobility data (if any)
+
+Data format for each training dataset:
+Hourly Load, Weather Features(Cloud Cover, Humidity, Precipitation, Pressure, Temperature), Day Index, Hour Index, Mobility Features
